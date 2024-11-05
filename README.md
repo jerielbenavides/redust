@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/static_resources/icons/icon440X280.png" alt="Nuke Reddit History Logo">
+  <img src="src/static_resources/icons/icon440X280.png" alt="Redust Logo">
 </p>
 
 # ares
@@ -8,9 +8,7 @@ Browser Extension that automates api requests to overwrite & delete comments, de
 
 ## Downloads
 
-[Chrome Extension](https://chrome.google.com/webstore/detail/nuke-reddit-history/aclagjkmidmkcdhkhlicmgkgmpgccaod/)
 
-[Firefox Add on](https://addons.mozilla.org/en-US/firefox/addon/nukereddithistory/)
 
 ## Requirements
 
@@ -38,8 +36,3 @@ Browser Extension that automates api requests to overwrite & delete comments, de
 1. click `[Load Temporary Add-on]`
 1. navigate to `/dist` and click select.
 
-## Support the dev
-
-Bitcoin: 38w6mRC7ZyPnyQxmfiQCd6so3xhrmmZHgH
-
-[Patreon](https://www.patreon.com/user?u=9592583)
