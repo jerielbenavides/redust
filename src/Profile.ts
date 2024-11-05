@@ -1,24 +1,24 @@
 import { networkRequests } from './NetworkRequests';
 import * as utils from './utils.js';
-import { AxiosPromise, AxiosError } from 'axios';
 
 enum Mode {
     posts = 'posts',
-    comments = 'comments'
+    comments = 'comments',
+    comments_edit = 'comments_edit',
 }
 
 export default class Profile {
-    private userName: string = '..loading';
+    userName: string = '..loading';
     private comments: Comment[] = [];
     private posts: Post[] = [];
     private modhash: string = '';
-    private currentComment: any = {
+    currentComment: any = {
         action: '..loading',
         comment: ''
     };
-    private mode!: Mode;
-    private sortIndex: number = 0;
-    private sort = [
+    mode!: Mode;
+    sortIndex: number = 0;
+    sort = [
         '?sort=new',
         '?sort=hot',
         '?sort=controversial',
@@ -35,7 +35,21 @@ export default class Profile {
         '?sort=top&t=month',
         '?sort=top&t=year',
         '?sort=top&t=all',
-    ]
+    ];
+
+    public async editComments(queryString: string) {
+        await this.fetchComments(queryString);
+        for (let comment of this.comments) {
+            this.currentComment = {
+                action: "Editing Comment...",
+                comment
+            };
+            await this.overWriteComment(comment);
+            this.currentComment.action = "Performing checks...";
+            await utils.resolveAfter7Seconds();
+        }
+        this.setup();
+    }
 
     public async overwriteAndDelComments(queryString: string) {
         await this.fetchComments(queryString);
@@ -46,44 +60,46 @@ export default class Profile {
             };
             await this.overWriteComment(comment);
             if (!comment.isEdited) {
-                // repeat same sort order on failure
                 this.overwriteAndDelComments(queryString);
                 break;
             }
-            this.currentComment.action = "Deleting Comment..."
+            this.currentComment.action = "Deleting Comment...";
             await this.deleteComment(comment);
 
             if (!comment.isDeleted) {
-                // repeat same sort order on failure
                 this.overwriteAndDelComments(queryString);
                 break;
             }
-            this.currentComment.action = "Performing checks..."
-            await utils.resolveAfter2Seconds();
+            this.currentComment.action = "Performing checks...";
+            await utils.resolveAfter7Seconds();
         }
         this.setup();
     }
 
     public async setup() {
+        await utils.resolveAfter7Seconds();
         if (this.sortIndex >= this.sort.length) {
-            this.currentComment.action = `All ${this.mode} deleted!`
+            this.currentComment.action = `All ${this.mode} deleted!`;
+            if(this.mode == Mode.comments_edit){
+                this.currentComment.action = `All comments anonymized`;
+            }
             this.currentComment.comment = undefined;
-            // alert(`Nuke Reddit History tried it's best to delete all ${this.mode}.\nFor Error resolution, please make a post on the subreddit r/NukeRedditHistory`);
-            return
+            return;
         }
         const r = await networkRequests.getUserDetails();
         this.userName = r.data.name;
         this.modhash = r.data.modhash;
-        // determine mode from url params
+
         const urlParams = new URLSearchParams(window.location.search);
         this.mode = urlParams.get('mode') as Mode;
         const curSort = this.sort[this.sortIndex];
 
         if (this.mode === Mode.posts) {
             this.deletePosts(curSort);
-        }
-        else if (this.mode === Mode.comments) {
+        } else if (this.mode === Mode.comments) {
             this.overwriteAndDelComments(curSort);
+        } else if (this.mode === Mode.comments_edit) {
+            this.editComments(curSort);
         }
         this.sortIndex++;
     }
@@ -100,7 +116,7 @@ export default class Profile {
     private async overWriteComment(comment: Comment): Promise<any> {
         try {
             const response = await comment.editComment(this.modhash, this.userName);
-            comment.isEdited = response.data.success;
+            comment.isEdited = response.success;
             return response;
         } catch (e) {
             utils.onNetworkError(e);
@@ -110,7 +126,7 @@ export default class Profile {
     private async deleteComment(comment: Comment): Promise<any> {
         try {
             const response = await comment.deleteComment(this.modhash);
-            comment.isDeleted = true; // reddit doesn't respond with success flag on delete.
+            comment.isDeleted = true;
             return response;
         } catch (e) {
             utils.onNetworkError(e);
@@ -122,15 +138,14 @@ export default class Profile {
         for (let p of this.posts) {
             this.currentComment = {
                 action: `Deleting Post titled ${p.title}\nposted to the subreddit: ${p.subreddit}`
-            }
+            };
             await this.deletePost(p);
-            this.currentComment.action = `Performing Checks....`;
+            this.currentComment.action = `Performing Checks...`;
             if (!p.isDeleted) {
-                // repeat current sort order on failure
                 this.deletePosts(queryString);
                 break;
             }
-            await utils.resolveAfter2Seconds();
+            await utils.resolveAfter7Seconds();
         }
         this.setup();
     }
@@ -156,17 +171,16 @@ export default class Profile {
 
     public getHumanizedSort(sort: string) {
         const params = new URLSearchParams(sort);
-        let humanizedSort = ''
+        let humanizedSort = '';
         params.forEach((value: string, key: string) => {
-            humanizedSort = `${humanizedSort} ${key}: ${value}`
-        })
+            humanizedSort = `${humanizedSort} ${key}: ${value}`;
+        });
         return humanizedSort;
     }
-
 }
 
 class Comment {
-    private redditThing: any; // raw comment object
+    private redditThing: any;
     private id: string;
     private thing_id: string;
     private body: string;
@@ -183,7 +197,7 @@ class Comment {
         this.subreddit = redditThing.data.subreddit;
     }
 
-    public editComment(uh: string, username: string): AxiosPromise {
+    public async editComment(uh: string, username: string) {
         const payload = {
             thing_id: this.thing_id,
             text: this.editedText,
@@ -192,19 +206,18 @@ class Comment {
             uh,
             renderstyle: 'html',
         };
-        return networkRequests.editComment(payload, uh);
+        return await networkRequests.editComment(payload, uh);
     }
 
-    public deleteComment(uh: string) {
+    public async deleteComment(uh: string) {
         const payload = {
             id: this.thing_id,
             executed: 'deleted',
             uh,
             renderstyle: 'html'
         };
-        return networkRequests.deleteRedditThing(payload, uh);
+        return await networkRequests.deleteRedditThing(payload, uh);
     }
-
 }
 
 class Post {
@@ -219,14 +232,13 @@ class Post {
         this.title = this.redditThing.data.title;
     }
 
-    public delete(uh: string) {
+    public async delete(uh: string) {
         const payload = {
             id: this.thing_id,
             executed: 'deleted',
             uh,
             renderstyle: 'html',
         };
-        return networkRequests.deleteRedditThing(payload, uh);
+        return await networkRequests.deleteRedditThing(payload, uh);
     }
-
 }
