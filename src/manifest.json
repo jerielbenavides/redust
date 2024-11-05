@@ -1,28 +1,31 @@
 {
-  "manifest_version": 2,
-
-  "name": "Nuke Reddit History",
-  "description": "To overwrite & delete all your comments on reddit, click this extension's icon next to your address bar.",
-  "version": "2.0",
+  "manifest_version": 3,
+  "name": "Redust: Reddit History Remover",
+  "description": "This extension allows you to anonymize, overwrite and/or delete all your reddit comments and posts.",
+  "version": "0.9.9",
   "icons": {
     "16": "/static_resources/icons/icon16.png",
     "48": "/static_resources/icons/icon48.png",
     "128": "/static_resources/icons/icon128.png"
   },
-
-  "browser_action": {
+  "action": {
     "default_popup": "/static_resources/popup.html"
   },
-  "permissions": ["activeTab", "https://*.reddit.com/"],
+  "permissions": ["activeTab"],
   "content_scripts": [
     {
-      "matches": ["https://*.reddit.com/nuke-reddit-history/*"],
+      "matches": ["https://*.reddit.com/*"],
       "include_globs": [
-        "https://*.reddit.com/nuke-reddit-history/?efe2d409a42=f9ce4f81e6326*"
+        "https://*.reddit.com/redust/?efe2d409a42=f9ce4f81e6326*"
       ],
       "run_at": "document_idle",
-      "js": ["Nuke-Reddit-History.js"]
+      "js": ["redust.js"]
     }
   ],
-  "web_accessible_resources": ["/static_resources/template.html"]
+  "web_accessible_resources": [
+    {
+      "resources": ["static_resources/template.html"],
+      "matches": ["https://*.reddit.com/*"]
+    }
+  ]
 }
