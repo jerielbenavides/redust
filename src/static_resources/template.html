@@ -1,93 +1,37 @@
-<script src="./vue.js"></script>
-
 <div id="nrhApp">
-    
-    <h1 class="text-center nuke-color m-b-md">Nuke Reddit History</h1>
-    
-    <div class="columns">
-        <div class="column-1 font-size-1_5x">
-            <ul class="bottom-border m-b-md">
-                <li class="m-b-md">
-                    <span class="nuke-color">Username:</span> {{profile.userName}}
-                </li>
-                <li>
-                    <span class="nuke-color">Action:</span> Deleting {{profile.mode}}
-                </li>
-            </ul>
-            <ul>
-                <li v-for="(s, i) in profile.sort" :key="s" :class="(profile.sortIndex>=i)? 'nuke-color': 'disabled-text'">
-                    {{ profile.getHumanizedSort(s) }}
-                </li>
-            </ul>
-        </div>
-        
-        <div class="column-2">
-            <span class="nuke-color font-size-2x">{{profile.currentComment.action}}</span>
-            <span v-if="profile.currentComment.comment">
-                <br>
-                `{{profile.currentComment.comment.body}}`
-                <br>
-                to
-                <br>
-                `{{profile.currentComment.comment.editedText}}`
-            </span>
-        </div>
+    <div id="redust_ui">
+        <h1 class="text-center nuke-color m-b-lg">Redust</h1>
 
+        <div class="content-container">
+            <div class="column column-1">
+                <ul class="info-list">
+                    <li class="info-item">
+                        <span class="info-label nuke-color">Loading Username</span>
+                        <span class="profile-username">Loading...</span>
+                    </li>
+                    <li class="info-item">
+                        <span class="info-label nuke-color">Action:</span>
+                        <span class="profile-action">
+                            Please wait
+                        </span>
+                    </li>
+                </ul>
+                <ul class="progress-list">
+                    <li v-for="(s, i) in profile.sort" :key="s"
+                        :class="['progress-item', (profile.sortIndex>=i) ? 'nuke-color' : 'disabled-text']">
+                        Loading...
+                    </li>
+                </ul>
+            </div>
+
+            <div class="column column-2">
+                <span class="current-action nuke-color">Starting soon...</span>
+                <div class="comment-box">
+                    <blockquote class="comment-body">This is where your reddit comments go! They will be edited and/or deleted</blockquote>
+                    <span class="to-text">to</span>
+                    <blockquote class="comment-edited-text">This is where the updated comment goes! The extension performs an action every 7 seconds to avoid reddit's limits.</blockquote>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
-<style>
-    body {
-        background: black;
-        color: whitesmoke;
-        font-family: 'Avenir', Helvetica, Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-
-    h1 {
-        font-size: 300%;
-    }
-
-    .columns {
-        display: flex;
-        justify-content: space-evenly;
-    }
-
-    .column-1 {
-        flex: 1;
-    }
-
-    .column-2 {
-        flex: 2;
-    }
-    
-    .nuke-color {
-        color: #fa8231;
-    }
-
-    .text-center {
-        text-align: center;
-    }
-    .font-size-1_5x {
-        font-size: 150%
-    }
-    .font-size-2x {
-        font-size: 200%;
-    }
-    .m-b-md {
-        margin-bottom: 1rem;
-    }
-
-    .m-l-md {
-        margin-left: 1rem;
-    }
-
-    .bottom-border {
-        border-bottom: grey;
-    }
-
-    .disabled-text {
-        color: grey;
-    }
-</style>
