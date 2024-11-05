@@ -2,7 +2,7 @@
   <img src="src/static_resources/icons/icon440X280.png" alt="Redust Logo">
 </p>
 
-# ares
+# Redust
 
 Browser Extension that automates api requests to overwrite & delete comments, delete posts on reddit.
 
