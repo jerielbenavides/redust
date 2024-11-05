@@ -84,11 +84,11 @@ export function generateRandomPhrase() {
 }
 
 /**
- * @function resolveAfter2Seconds: Simulates sleep() for 7 seconds and returns a promise.
+ * @function resolveAfter7Seconds: Simulates sleep() for 7 seconds and returns a promise.
  * to be used in conjunction with await.
  * Primary purpose is to respect reddit's API ratelimits
  */
-export function resolveAfter2Seconds() {
+export function resolveAfter7Seconds() {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve("resolved");
