@@ -27,5 +27,11 @@
       "resources": ["static_resources/template.html"],
       "matches": ["https://*.reddit.com/*"]
     }
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "redust_ferguwgdhiwheweuhdi23jb",
+    }
+  }
+
 }
