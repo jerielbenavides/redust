@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Redust: Reddit History Remover",
   "description": "This extension allows you to anonymize, overwrite and/or delete all your reddit comments and posts.",
-  "version": "0.9.9",
+  "version": "1.0.1",
   "icons": {
     "16": "/static_resources/icons/icon16.png",
     "48": "/static_resources/icons/icon48.png",
@@ -24,7 +24,8 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["static_resources/template.html"]
+      "resources": ["static_resources/template.html"],
+      "matches": ["https://*.reddit.com/*"]
     }
   ],
   "browser_specific_settings": {

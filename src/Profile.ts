@@ -60,20 +60,20 @@ export default class Profile {
             };
             await this.overWriteComment(comment);
             if (!comment.isEdited) {
-                this.overwriteAndDelComments(queryString);
+                await this.overwriteAndDelComments(queryString);
                 break;
             }
             this.currentComment.action = "Deleting Comment...";
             await this.deleteComment(comment);
 
             if (!comment.isDeleted) {
-                this.overwriteAndDelComments(queryString);
+                await this.overwriteAndDelComments(queryString);
                 break;
             }
             this.currentComment.action = "Performing checks...";
             await utils.resolveAfter7Seconds();
         }
-        this.setup();
+        await this.setup();
     }
 
     public async setup() {
@@ -95,11 +95,11 @@ export default class Profile {
         const curSort = this.sort[this.sortIndex];
 
         if (this.mode === Mode.posts) {
-            this.deletePosts(curSort);
+            await this.deletePosts(curSort);
         } else if (this.mode === Mode.comments) {
-            this.overwriteAndDelComments(curSort);
+            await this.overwriteAndDelComments(curSort);
         } else if (this.mode === Mode.comments_edit) {
-            this.editComments(curSort);
+            await this.editComments(curSort);
         }
         this.sortIndex++;
     }
@@ -142,12 +142,12 @@ export default class Profile {
             await this.deletePost(p);
             this.currentComment.action = `Performing Checks...`;
             if (!p.isDeleted) {
-                this.deletePosts(queryString);
+                await this.deletePosts(queryString);
                 break;
             }
             await utils.resolveAfter7Seconds();
         }
-        this.setup();
+        await this.setup();
     }
 
     public async fetchPosts(queryString: string) {
