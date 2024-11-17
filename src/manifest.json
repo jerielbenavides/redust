@@ -11,7 +11,7 @@
   "action": {
     "default_popup": "/static_resources/popup.html"
   },
-  "permissions": ["activeTab"],
+  "permissions": [],
   "content_scripts": [
     {
       "matches": ["https://*.reddit.com/*"],
@@ -24,14 +24,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["static_resources/template.html"],
-      "matches": ["https://*.reddit.com/*"]
+      "resources": ["static_resources/template.html"]
     }
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "redust_ferguwgdhiwheweuhdi23jb",
+      "id": "{f9ce4d9b-4b56-4eb7-9eac-27fb39b1e491}"
     }
   }
-
 }
